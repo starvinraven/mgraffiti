@@ -131,7 +131,17 @@ class ImageService {
 		log.info "saving layer: ${layer} to wall ${wall}"
 		//wall.lastUpdated = new Date()
 		wall.layers.add(layer)
-		return wall.save()
+		def ret = wall.save()
+		createFlattenedImagesAsync(wall)
+		return ret
+	}
+	
+	def createFlattenedImagesAsync(Wall wall) {
+		final Thread t = Thread.start {
+			// TODO: should have locking for concurrency..
+			createFlattenedImage(wall, ImageTypes.PNG)
+			createFlattenedImage(wall, ImageTypes.JPG)
+		}
 	}
 
 	def validateWallLayer(wall, wallImageInstance, imageBytes) {

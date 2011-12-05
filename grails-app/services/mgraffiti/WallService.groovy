@@ -8,7 +8,9 @@ class WallService {
 	def fileService
 
 	def create(Wall wall) {
-		wall.save()
+		def ret = wall.save()
+		imageService.createFlattenedImagesAsync(wall)
+		ret
 	}
 
 	def findWallsNear(lat, lon, maxDistanceKm) {

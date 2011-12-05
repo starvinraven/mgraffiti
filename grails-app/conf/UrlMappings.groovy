@@ -8,6 +8,7 @@ class UrlMappings {
 		"/rest/wall/$id/image"(controller: 'restImage') {
 			action = [GET: 'outputImage', PUT: 'putImage', POST: 'putImage']
 		}
+		"/walls"(controller: 'main', action: 'walls')
 		"/"(controller:"main", action: "index")
 		"500"(view:'/error')
 	}

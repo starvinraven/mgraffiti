@@ -65,7 +65,7 @@ class RestWallController extends RestBaseController {
 			wall.nfcId = data.nfcId
 		}
 		log.info("saving: ${wall.dump()}")
-		if(!wall.save()) {
+		if(!wallService.create(wall)) {
 			log.warn("error")
 			sendError("Error saving wall ${wall.errors}")	
 		} else {

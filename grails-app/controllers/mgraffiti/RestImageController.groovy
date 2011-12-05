@@ -35,11 +35,6 @@ class RestImageController extends RestBaseController {
 			sendError("Invalid image", 400)
 		} else {
 			log.info "successfully saved layer: ${wallLayer} to wall ${wall} (${wall.layers})"
-			final Thread t = Thread.start {
-				// TODO: should have locking for concurrency..
-				imageService.createFlattenedImage(wall, ImageTypes.PNG)
-				imageService.createFlattenedImage(wall, ImageTypes.JPG)
-			}
 			render wall.toMap() as JSON
 		}
 	}

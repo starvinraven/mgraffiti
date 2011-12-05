@@ -594,6 +594,7 @@ a.skip {
 
 div.wall {
 	border: solid green 1px; padding: 10px;
+	margin-bottom: 10px;
 }
 .wallInner {
 	margin: 30px; height: 250px;
@@ -603,4 +604,13 @@ div.wall {
 }
 .imageContainer {
 	float:right; height: 200px; width:500px;
+}
+
+#pagingText > * {
+	display: none;
+	/* visibility: hidden; */
+}
+
+#pagingText > a {
+	text-decoration: underline;	
 }
