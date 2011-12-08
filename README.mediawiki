@@ -1,0 +1,38 @@
+= mGraffiti =
+
+== What is this? ==
+
+This is the server backend for the Futurice mGraffiti project. mGraffiti is the project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - as such, there are currently no tests (yet, anyway).
+
+== What does it do? ==
+
+The app is essentially a 'mobile toilet wall'. Using a REST JSON API, you can:
+
+* Create new walls, and identify them with lat/lon coordinates and/or a NFC tag. (For the initial version, all walls are given a preset background image.)
+* Query walls by proximity or NFC tag. 
+* Get the images for the walls.
+* Add an image layer to a wall.
+
+== What is it built with? ==
+
+Currently:
+
+* [http://grails.org Grails] 2.0RC2
+* [http://mongodb.org MongoDB] 2.0.1 
+
+== How do I run this thing? ==
+
+Download the dependencies above, install them on a given machine, and say 'grails run-app' - you should have a working instance of the backend app. 
+
+== REST API ==
+
+The meat and potatoes of the application.
+
+* GET /rest/wall: list (all) walls
+* GET /rest/wall?lat=61.12&lon=26.16&radius=100: list walls near location (with max distance)
+* GET /rest/wall?nfcId=abc123: get wall by NFC tag ID
+* GET /rest/wall/:wallId/image: get (flattened) image for wall as PNG, without background (only transparent bg)
+* GET /rest/wall/:wallId/webImage: get (flattened) image for wall as JPG, with background
+* POST/PUT /rest/wall/:wallId/image: add layer to wall image (must be PNG, match dimensions of background image)
+* POST/PUT /rest/wall: create wall. Data as application/json payload in request, e.g.: <code>{"title": "test", "creatorName": "dudeman12", location: {"lat":12.132, "lon":13.456}, "nfcId": "nfcTagGoesHere"}</code>
+
