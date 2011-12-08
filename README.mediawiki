@@ -2,15 +2,15 @@
 
 == What is this? ==
 
-This is the server backend for the Futurice mGraffiti project. mGraffiti is the project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - as such, there are currently no tests (yet, anyway).
+This is the server backend for the Futurice mGraffiti project. mGraffiti is the project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - as such, there are currently no tests (yet, anyway) and there will be rough edges here and there.
 
 The application is running [http://mgraffiti.futurice.com here], if you want to check it out.
 
 == What does it do? ==
 
-The app is essentially a 'mobile toilet wall'. Using a REST JSON API, you can:
+The app is essentially a 'virtual toilet wall', on which users can paint using the mobile clients. More technically, using a REST JSON API, you can:
 
-* Create new walls, and identify them with lat/lon coordinates and/or a NFC tag. (For the initial version, all walls are given a preset background image.)
+* Create new walls, and associate them with lat/lon coordinates and/or a NFC tag. (For the initial version, all walls are given a preset background image - custom background can be easily supported.)
 * Query walls by proximity or NFC tag. 
 * Get the images for the walls.
 * Add an image layer to a wall.
@@ -19,12 +19,12 @@ The app is essentially a 'mobile toilet wall'. Using a REST JSON API, you can:
 
 Currently:
 
-* [http://grails.org Grails] 2.0RC2
-* [http://mongodb.org MongoDB] 2.0.1 
+* [http://grails.org Grails] 2.0RC2.
+* [http://mongodb.org MongoDB] 2.0.1. 
 
 == How do I run this thing? ==
 
-Download the dependencies above, install them on a given machine, and say 'grails run-app' - you should have a working instance of the backend app. 
+Download the dependencies above, install them on a given machine, and say 'grails run-app' - you should have a working instance of the backend app. Why? Might be useful for learning MongoDB/Grails... Also feel free to create your own clients if you wish!
 
 == REST API ==
 
