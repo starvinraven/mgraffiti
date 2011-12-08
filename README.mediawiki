@@ -4,6 +4,8 @@
 
 This is the server backend for the Futurice mGraffiti project. mGraffiti is the project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - as such, there are currently no tests (yet, anyway).
 
+The application is running [http://mgraffiti.futurice.com here], if you want to check it out.
+
 == What does it do? ==
 
 The app is essentially a 'mobile toilet wall'. Using a REST JSON API, you can:
