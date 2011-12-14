@@ -9,6 +9,7 @@ class RestWallController extends RestBaseController {
 	def wallService
 
 	def list() {
+		cache false
 		def result = null
 		if(params.lat && params.lon) {
 			result = byLocation(params.lat, params.lon, params.radius)
