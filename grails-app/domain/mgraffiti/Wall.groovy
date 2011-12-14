@@ -18,7 +18,7 @@ class Wall {
 		location geoIndex:true
 	}
 	
-	static transients = ["imageUrl", "grailsApplication", "toMap", "webImageUrl"]
+	static transients = ["imageDimensions", "imageUrl", "grailsApplication", "toMap", "webImageUrl"]
 	static embedded = ['layers']
 	
 	ObjectId id
@@ -36,6 +36,11 @@ class Wall {
 	
 	def getWebImageUrl() {
 		return grailsApplication.config.grails.serverURL + "/rest/wall/${this.id.toString()}/webImage"
+	}
+	
+	def getImageDimensions() {
+		// literal for now, since backgrounds are preset
+		[width: 2000, height: 800]
 	}
 	
 	/*
@@ -84,7 +89,7 @@ class Wall {
 		map.image = [:]
 		map.image.url = this.imageUrl
 		map.image.jpgUrl = this.webImageUrl
-		// map.image.dimensions = this.imageDimensions
+		map.image.dimensions = this.imageDimensions
 		map.image.numLayers = this.layers?.size() ?: 0
 		map.lastUpdated = this.lastUpdated
 		map.dateCreated = this.dateCreated

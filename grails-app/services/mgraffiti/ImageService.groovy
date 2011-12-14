@@ -49,14 +49,14 @@ class ImageService {
 		def baos = new ByteArrayOutputStream()
 		combineImages(images, baos, type)
 		if(existingFlattenedImageId) {
-			log.info("deleting existing flattened image for wall ${wall} with fileName ${fileName}")
+			log.info("deleting existing flattened image for wall ${wall} with type ${type} and fileName ${fileName}")
 			fileService.delete(FileBuckets.WALL_FLATTENED, existingFlattenedImageId)
 		}
 		fileService.saveImage(FileBuckets.WALL_FLATTENED, baos.toByteArray(), fileName)
 	}
 
 	def combineImages(def imageFiles, OutputStream outputStream, ImageTypes type) {
-		log.info ("Combining images with lengths: ${imageFiles.collect{it?.length}}")
+		log.info ("Combining images with lengths: ${imageFiles.collect{it?.length}} for type ${type}")
 		def startTime = System.currentTimeMillis()
 
 		//BufferedImage combined = new BufferedImage(imageFiles[0].metadata.dimensions.width, imageFiles[0].metadata.dimensions.height, outputType == "PNG" ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB)
@@ -70,7 +70,7 @@ class ImageService {
 			}
 		}
 		ImageIO.write(combined, type.format, outputStream)
-		log.info "Combined ${imageFiles?.size()?:0} images in ${System.currentTimeMillis()-startTime} ms"
+		log.info "Combined ${imageFiles?.size()?:0} images in ${System.currentTimeMillis()-startTime} ms, type ${type}"
 	}
 
 	String getFileName(Wall wall, ImageTypes type) {
@@ -137,9 +137,11 @@ class ImageService {
 	}
 	
 	def createFlattenedImagesAsync(Wall wall) {
+		// png for client synchronously, since client will get confused otherwise...
+		createFlattenedImage(wall, ImageTypes.PNG)
+		// web version can be created in bg
 		final Thread t = Thread.start {
 			// TODO: should have locking for concurrency..
-			createFlattenedImage(wall, ImageTypes.PNG)
 			createFlattenedImage(wall, ImageTypes.JPG)
 		}
 	}
