@@ -5,15 +5,19 @@ import groovyx.gpars.GParsPool
 
 class RestImageController extends RestBaseController {
 
+	// TODO: smarter cache headers
+	
 	def imageService
 	
 	def outputWebImage() {
+		cache false
 		def wall = getOr404(Wall, params.id)
 		response.contentType = 'image/jpeg'
 		imageService.getFlattenedImage(wall, ImageTypes.JPG, response.outputStream)
 	}
 	
 	def outputImage() {
+		cache false
 		def wall = getOr404(Wall, params.id)
 		ByteArrayOutputStream baos = new ByteArrayOutputStream() // <- probably required due to WEIRD grails bug?
 		imageService.getFlattenedImage(wall, ImageTypes.PNG, baos)

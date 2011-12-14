@@ -17,6 +17,13 @@ class ImageService {
 	private static final DEFAULT_WALL_BACKGROUND_IMAGE_NAME = "wallbackground.png"
 	private static final DEFAULT_BLANK_BACKGROUND_IMAGE_NAME = "blankbackground.png"
 
+	/**
+	 * Actually write the flattened image for a wall to outputStream
+	 * 
+	 * @param wall
+	 * @param type
+	 * @param outputStream
+	 */
 	void getFlattenedImage(Wall wall, ImageTypes type, OutputStream outputStream) {
 		def fileName = getFileName(wall, type)
 		log.info("get flattened ${fileName}")
