@@ -45,6 +45,7 @@
 					item.find('p:eq(0)').text("Created by "+wall.creatorName+" at "+wall.dateCreated)
 					item.find('p:eq(1)').text("Last updated "+wall.lastUpdated)
 					item.find('p:eq(2)').text("Layers: "+wall.image.numLayers)
+					item.find('p:eq(3)').text("Popularity: "+wall.popularity)
 					item.show();
 					item.attr("id", "wall-"+wall.id)
 					$("#walls").append(item);
@@ -105,6 +106,7 @@
 			<p>Created by </p>
 			<p>Last updated </p>
 			<p>Layers: </p>
+			<p>Popularity: </p>
 			<div class='wallInner'>
 				<div class='mapContainer'>
 				</div>
