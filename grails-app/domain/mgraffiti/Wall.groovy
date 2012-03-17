@@ -15,7 +15,6 @@ class Wall {
 	
 	static mapping = {
 		location geoIndex:true
-		popularity index:true
 	}
 	
 	static transients = ["imageDimensions", "imageUrl", "grailsApplication", "toMap", "webImageUrl"]

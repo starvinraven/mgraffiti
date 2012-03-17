@@ -12,7 +12,7 @@ class RestWallController extends RestBaseController {
 		cache false
 		def result = null
 		if(params.lat && params.lon) {
-			result = byLocation(params.lat, params.lon, params.radius)
+			result = byLocation(params.lat.replace(",", "."), params.lon.replace(",", "."), params.radius)
 		}  else if(params.nfcId) {
 			result = byNfc(params.nfcId)
 		} else {

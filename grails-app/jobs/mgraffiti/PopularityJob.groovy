@@ -8,7 +8,7 @@ class PopularityJob {
 	def concurrent = false
 	
 	static triggers = {
-		simple name: 'popularityTrigger', startDelay: 60000, repeatInterval: 30000
+		simple name: 'popularityTrigger', startDelay: 60000, repeatInterval: 120000
 	}
 
 	def execute() {
