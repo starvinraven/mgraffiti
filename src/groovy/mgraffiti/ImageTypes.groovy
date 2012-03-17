@@ -8,7 +8,7 @@ enum ImageTypes {
 	String format
 	List scaleTo = null
 	boolean insertDefaultBackground
-	public static final defaultSize = [2000, 800] 
+	public static final DEFAULT_SIZE = [2000, 800] 
 
 	public ImageTypes(format, insertDefaultBackground, scaleTo = null) {
 		this.format = format

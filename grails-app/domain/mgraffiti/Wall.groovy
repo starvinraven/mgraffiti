@@ -8,9 +8,6 @@ class Wall {
 
     static constraints = {
 		location(nullable: true)
-		/*latitude(nullable: true, blank: true)
-		longitude(nullable: true, blank: true)*/
-		//creatorName(nullable: true, blank: true)
 		nfcId(nullable: true, blank: true)
     }
 	
@@ -29,6 +26,7 @@ class Wall {
 	List<WallLayer> layers
 	String creatorName
 	String nfcId
+	Double popularity = 0
 	
 	def getImageUrl() {
 		return grailsApplication.config.grails.serverURL + "/rest/wall/${this.id.toString()}/image"
@@ -42,40 +40,6 @@ class Wall {
 		// literal for now, since backgrounds are preset
 		[width: 2000, height: 800]
 	}
-	
-	/*
-	def setLatitude(def lat) {
-		if(!location) {
-			location = [lat, null]
-		} else {
-			location[1] = lat
-		}
-	}
-	
-	def setLongitude(def lon) {
-		if(!location) {
-			location = [null, lon]
-		} else {
-			location[0] = lon
-		}
-	}
-	
-	def getLatitude() {
-		if(!location || location.size != 2) {
-			null
-		} else {
-			location[1]
-		}
-	}
-	
-	def getLongitude() {
-		if(!location || location.size != 2) {
-			null
-		} else {
-			location[0]
-		}
-	}
-	*/
 	
 	def toMap() {
 		def map = [:]

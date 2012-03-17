@@ -1,7 +1,6 @@
 package mgraffiti
 
 import javax.imageio.ImageIO
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import com.mongodb.gridfs.GridFSDBFile
@@ -18,7 +17,7 @@ class ImageService {
 	private static final DEFAULT_BLANK_BACKGROUND_IMAGE_NAME = "blankbackground.png"
 
 	/**
-	 * Actually write the flattened image for a wall to outputStream
+	 * Write a wall's flattened image (creating it, if necessary) to outputStream.
 	 * 
 	 * @param wall
 	 * @param type
@@ -43,7 +42,16 @@ class ImageService {
 		log.info("outputted image (${type}) for wall ${wall} - wrote ${bytes} bytes")
 	}
 
-	def createFlattenedImage(Wall wall, ImageTypes type) {
+	/**
+	 * Create flattened wall image (using all layers) and write to database. Overwrites existing flattened image if exists.
+	 * 
+	 * Note: transactionality would be nice.
+	 * 
+	 * @param wall
+	 * @param type
+	 * @return
+	 */
+	void createFlattenedImage(Wall wall, ImageTypes type) {
 		def images = []
 		if(type.insertDefaultBackground) {
 			images << getDefaultBackgroundImage()
@@ -62,15 +70,23 @@ class ImageService {
 		fileService.saveImage(FileBuckets.WALL_FLATTENED, baos.toByteArray(), fileName)
 	}
 
+	/**
+	 * Combine a bunch of image files
+	 * 
+	 * @param imageFiles A list of image files (MongoDB GridFSDBFile instances)
+	 * @param outputStream Where to write the resulting image
+	 * @param type The ImageType to output
+	 * @return
+	 */
 	def combineImages(def imageFiles, OutputStream outputStream, ImageTypes type) {
 		log.info ("Combining images with lengths: ${imageFiles.collect{it?.length}} for type ${type}")
 		def startTime = System.currentTimeMillis()
 
 		//BufferedImage combined = new BufferedImage(imageFiles[0].metadata.dimensions.width, imageFiles[0].metadata.dimensions.height, outputType == "PNG" ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB)
-		BufferedImage combined = new BufferedImage(ImageTypes.defaultSize[0], ImageTypes.defaultSize[1], type.format == "PNG" ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB)
+		BufferedImage combined = new BufferedImage(ImageTypes.DEFAULT_SIZE[0], ImageTypes.DEFAULT_SIZE[1], type.format == "PNG" ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB)
 		Graphics g = combined.getGraphics()
 		imageFiles.each {
-			if(it) {
+			if(it?.inputStream) {
 				g.drawImage(ImageIO.read(it.inputStream), 0, 0, null)
 			} else {
 				log.warn("error: invalid image file: ${it}")
@@ -84,6 +100,10 @@ class ImageService {
 		wall.id.toString() + "." + (type.format.toLowerCase())
 	}
 
+	/**
+	 * Get the default background image (currently a tile wall .PNG)
+	 * @return The image file
+	 */
 	GridFSDBFile getDefaultBackgroundImage() {
 		def getImage = { fileService.findFileByName(FileBuckets.DEFAULT_IMAGES, DEFAULT_WALL_BACKGROUND_IMAGE_NAME) }
 		def image = getImage()
@@ -94,6 +114,10 @@ class ImageService {
 		image
 	}
 
+	/**
+	 * Get the blank background image (currently a blank transparent .PNG)
+	 * @return
+	 */
 	GridFSDBFile getBlankBackgroundImage() {
 		def getImage = { fileService.findFileByName(FileBuckets.DEFAULT_IMAGES, DEFAULT_BLANK_BACKGROUND_IMAGE_NAME) }
 		def image = getImage()
@@ -104,6 +128,10 @@ class ImageService {
 		image
 	}
 
+	/**
+	 * Import default background image to database from filesystem
+	 * 
+	 */
 	def loadDefaultWallBackgroundImage() {
 		// when starting, assure we have the background images in database - if not, add
 		if(!fileService.findFileByName(FileBuckets.DEFAULT_IMAGES, DEFAULT_WALL_BACKGROUND_IMAGE_NAME)) {
@@ -115,7 +143,11 @@ class ImageService {
 			fileService.saveImage(FileBuckets.DEFAULT_IMAGES, file.bytes, DEFAULT_WALL_BACKGROUND_IMAGE_NAME)
 		}
 	}
-	
+
+	/**
+	 * Import default blank background image to database from filesystem	
+	 *
+	 */
 	def loadDefaultBlankBackgroundImage() {
 		if(!fileService.findFileByName(FileBuckets.DEFAULT_IMAGES, DEFAULT_BLANK_BACKGROUND_IMAGE_NAME)) {
 			// transparent bg image
@@ -127,6 +159,15 @@ class ImageService {
 		}
 	}
 	
+	/**
+	 * Add a new layer image to wall
+	 * 
+	 * @param wall The wall to add the layer to
+	 * @param layer The wall layer domain object
+	 * @param bytes The image (transparent .PNG)
+	 * 
+	 * @return the updated wall object, or false if invalid layer
+	 */
 	def addLayer(Wall wall, WallLayer layer, byte[] bytes) {
 		if(!validateWallLayer(wall, layer, bytes)) {
 			return false
@@ -136,23 +177,38 @@ class ImageService {
 		layer.layerImageId = file.id.toString()
 		layer.dateCreated = new Date()
 		log.info "saving layer: ${layer} to wall ${wall}"
-		//wall.lastUpdated = new Date()
 		wall.layers.add(layer)
 		def ret = wall.save()
 		createFlattenedImagesAsync(wall)
 		return ret
 	}
 	
+	/**
+	 * Create flattened images (all types) asynchronously
+	 * 
+	 * TODO: logic for supporting future types automatically
+	 * 
+	 * @param wall
+	 * @return
+	 */
 	def createFlattenedImagesAsync(Wall wall) {
-		// png for client synchronously, since client will get confused otherwise...
+		// PNG must be created synchronously, since it will be returned in "add layer" request...
 		createFlattenedImage(wall, ImageTypes.PNG)
 		// web version can be created in bg
 		final Thread t = Thread.start {
-			// TODO: should have locking for concurrency..
+			// TODO: should have wall level locking for concurrency..
 			createFlattenedImage(wall, ImageTypes.JPG)
 		}
 	}
 
+	/**
+	 * Check that the layer being added to wall is valid
+	 * 
+	 * @param wall The wall object
+	 * @param wallImageInstance The WallImage being added
+	 * @param imageBytes The image being added, as byte array
+	 * @return
+	 */
 	def validateWallLayer(wall, wallImageInstance, imageBytes) {
 		if(!wall || !wallImageInstance) {
 			wallImageInstance.errors.reject("mgraffiti.image.invalidWall", "Invalid wall (${wall}) or image (${wallImageInstance}) uploaded")
@@ -164,7 +220,6 @@ class ImageService {
 			return false
 		}
 
-		//if(!isPng(new ByteArrayInputStream(imageBytes), true)) {
 		if(!isPng(imageBytes)) {
 			wallImageInstance.errors.reject("mgraffiti.image.invalid", "Image not valid PNG!")
 			return false
@@ -180,6 +235,12 @@ class ImageService {
 		return true
 	}
 
+	/**
+	 * Get all layer images for wall
+	 * 
+	 * @param wall The wall whose images are wanted
+	 * @return List of GridFSDBFile instances
+	 */
 	def getLayersForWall(Wall wall) {
 		def list = []
 		wall.layers?.each {
@@ -188,35 +249,29 @@ class ImageService {
 		list
 	}
 
+	/**
+	 * Get dimensions for an image
+	 * 
+	 * @param inputStream The image file (at least .JPG, .PNG supported)
+	 * @return map with keys width, height
+	 */
 	def getImageDimensions(def inputStream, def close = false) {
 		try {
 			def img = ImageIO.read(inputStream)
 			return [width: img?.width, height: img?.height]
 		} finally {
-			if(close) {
+			if (close) {
 				inputStream?.close()
 			}
 		}
 	}
 
-	def isPng(InputStream is, boolean close = false) {
-		try {
-			def expected = [0x89, 0x50, 0x4e, 0x47]
-			def i = 0
-			def mismatch = expected.find {
-				is.read() != expected[i++]
-			}
-			return !mismatch
-		} catch(Exception e) {
-			log.error("Error reading stream!")
-			return false
-		} finally {
-			if(close) {
-				is.close()
-			}
-		}
-	}
-	
+	/**
+	 * Check if image is a valid PNG file, based on file header
+	 * 
+	 * @param bytes The PNG file as byte array
+	 * @return true or false
+	 */
 	def isPng(byte[] bytes) {
 		//def expected = [0x89, 0x50, 0x4e, 0x47]
 		def expected = [-119, 80, 78, 71]

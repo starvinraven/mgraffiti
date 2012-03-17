@@ -36,9 +36,12 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
+		// exclusively mongo:
         // compile ":hibernate:$grailsVersion"
         compile ":jquery:1.7"
-        compile ":resources:1.0.2"
+        runtime ":resources:1.1.6"
+		compile ":mongodb:1.0.0.RC4"
+		compile ":rest:0.7"
 
         build ":tomcat:$grailsVersion"
     }

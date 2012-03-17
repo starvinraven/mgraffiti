@@ -15,11 +15,13 @@ The app is essentially a 'virtual toilet wall', on which users can paint using t
 * Get the images for the walls.
 * Add an image layer to a wall.
 
+There is also a quick'n'dirty web page, where you can view the walls created.
+
 == What is it built with? ==
 
 Currently:
 
-* [http://grails.org Grails] 2.0RC2.
+* [http://grails.org Grails] 2.0.1.
 * [http://mongodb.org MongoDB] 2.0.1. 
 
 == How do I run this thing? ==
@@ -31,10 +33,10 @@ Download the dependencies above, install them on a given machine, and say 'grail
 The meat and potatoes of the application.
 
 * GET /rest/wall: list (all) walls
-* GET /rest/wall?lat=61.12&lon=26.16&radius=100: list walls near location (with max distance)
+* GET /rest/wall?lat=61.12&lon=26.16&radius=100: list walls near location (with optional max distance in km)
 * GET /rest/wall?nfcId=abc123: get wall by NFC tag ID
-* GET /rest/wall/:wallId/image: get (flattened) image for wall as PNG, without background (only transparent bg)
+* GET /rest/wall/:wallId/image: get (flattened) image for wall as PNG, without background (only transparency)
 * GET /rest/wall/:wallId/webImage: get (flattened) image for wall as JPG, with background
-* POST/PUT /rest/wall/:wallId/image: add layer to wall image (must be PNG, match dimensions of background image)
+* POST/PUT /rest/wall/:wallId/image: add layer to wall image (must be PNG and match dimensions of background image)
 * POST/PUT /rest/wall: create wall. Data as application/json payload in request, e.g.: <code>{"title": "test", "creatorName": "dudeman12", location: {"lat":12.132, "lon":13.456}, "nfcId": "nfcTagGoesHere"}</code>
 
