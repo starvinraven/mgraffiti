@@ -42,10 +42,10 @@
 					item.find('h2').text(wall.title);
 					item.find('a').attr("href", wall.image.jpgUrl);
 					item.find('img').attr("src", wall.image.jpgUrl);
-					item.find('p:eq(0)').text("Created by "+wall.creatorName+" at "+wall.dateCreated)
-					item.find('p:eq(1)').text("Last updated "+wall.lastUpdated)
-					item.find('p:eq(2)').text("Layers: "+wall.image.numLayers)
-					item.find('p:eq(3)').text("Popularity: "+wall.popularity)
+					item.find('p:eq(0)').text("Created by "+wall.creatorName+" at "+wall.dateCreated);
+					item.find('p:eq(1)').text("Last updated "+wall.lastUpdated);
+					item.find('p:eq(2)').text("Layers: "+wall.image.numLayers);
+					item.find('p:eq(3)').text("Popularity: "+ Math.round(wall.popularity));
 					item.show();
 					item.attr("id", "wall-"+wall.id)
 					$("#walls").append(item);
@@ -73,7 +73,7 @@
 			},
 			
 			renderPaging: function() {
-				console.log("paging");
+				//console.log("paging");
 				var span = $("#pagingText");
 				var pageInfo = MGraffiti.pageInfo;
 				if(pageInfo.firstResult > 0) {
