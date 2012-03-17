@@ -42,6 +42,9 @@ grails.project.dependency.resolution = {
         runtime ":resources:1.1.6"
 		compile ":mongodb:1.0.0.RC4"
 		compile ":rest:0.7"
+		compile ":joda-time:1.4"
+		//compile ":quartz:1.0-RC1"
+		compile ":quartz:0.4.2"
 
         build ":tomcat:$grailsVersion"
     }

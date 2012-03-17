@@ -4,6 +4,8 @@ import org.bson.types.ObjectId
 
 class WallLayer {
 
+	static mapWith = "mongo"
+
     static constraints = {
     }
 	

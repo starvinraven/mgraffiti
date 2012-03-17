@@ -6,6 +6,8 @@ class Wall {
 	
 	def grailsApplication
 
+	static mapWith = "mongo"
+	
     static constraints = {
 		location(nullable: true)
 		nfcId(nullable: true, blank: true)
@@ -13,6 +15,7 @@ class Wall {
 	
 	static mapping = {
 		location geoIndex:true
+		popularity index:true
 	}
 	
 	static transients = ["imageDimensions", "imageUrl", "grailsApplication", "toMap", "webImageUrl"]
@@ -20,7 +23,7 @@ class Wall {
 	
 	ObjectId id
 	String title
-	List<Double> location // NOTE: order is latitude, longitude (x,y)
+	List<Double> location // NOTE: order is longitude, latitude (x,y)
 	Date lastUpdated
 	Date dateCreated
 	List<WallLayer> layers
