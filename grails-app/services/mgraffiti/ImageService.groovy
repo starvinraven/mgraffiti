@@ -67,7 +67,7 @@ class ImageService {
 			log.info("deleting existing flattened image for wall ${wall} with type ${type} and fileName ${fileName}")
 			fileService.delete(FileBuckets.WALL_FLATTENED, existingFlattenedImageId)
 		}
-		fileService.saveImage(FileBuckets.WALL_FLATTENED, baos.toByteArray(), fileName)
+		fileService.saveImage(FileBuckets.WALL_FLATTENED, baos.toByteArray(), fileName, [wallId: wall.id])
 	}
 
 	/**
@@ -172,7 +172,7 @@ class ImageService {
 		if(!validateWallLayer(wall, layer, bytes)) {
 			return false
 		}
-		def file = fileService.saveImage(FileBuckets.WALL_LAYERS, bytes)
+		def file = fileService.saveImage(FileBuckets.WALL_LAYERS, bytes, null, [wallId: wall])
 		log.info "file id: ${file.id.toString()}"
 		layer.layerImageId = file.id.toString()
 		layer.dateCreated = new Date()

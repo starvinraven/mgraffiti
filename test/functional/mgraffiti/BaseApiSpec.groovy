@@ -1,15 +1,16 @@
 package mgraffiti
 
-
+import com.gmongo.GMongo
+import com.mongodb.gridfs.GridFS
+import com.mongodb.DB
 import groovyx.net.http.RESTClient
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.ContentType
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import groovyx.net.http.URIBuilder
-//import grails.plugin.spock.IntegrationSpec
 import spock.lang.*
 import grails.plugin.spock.IntegrationSpec
-import grails.plugin.spock.*
+
 
 abstract class BaseApiSpec extends IntegrationSpec {
 
@@ -35,4 +36,23 @@ abstract class BaseApiSpec extends IntegrationSpec {
 		ub.port = serverPort
 		ub.toString()
 	}
+	
+
+	static protected def getMongoDb() {
+		getMongo()?.getDB("mgraffiti")
+	}
+	
+	static protected def getGridFs(String bucket) {
+		new GridFS(getMongo().mongo.getDB("mgraffiti"), bucket)
+	}
+	
+	/**
+	* Only support testing on local mongo databases for now
+	* TODO: use config
+	* @return
+	*/
+	private static def getMongo() {
+		GMongo mongo = new GMongo("127.0.0.1", 27017)
+	}
+	
 }

@@ -21,10 +21,12 @@ class FileService {
 	/**
 	 * Save an image file into GridFS and given bucket
 	 * @param bucket 
-	 * @param data  
+	 * @param data
+	 * @param filename The filename to save as
+	 * @param attributes Extra db attributes
 	 * @return the created file
 	 */
-	GridFSInputFile saveImage(FileBuckets bucket, byte[] bytes, String filename = null) {
+	GridFSInputFile saveImage(FileBuckets bucket, byte[] bytes, String filename = null, Map attributes = [:]) {
 		GridFS gridFs = getGridFs(bucket)
 		def dimensions = imageService.getImageDimensions(new ByteArrayInputStream(bytes))
 		GridFSInputFile inputFile = gridFs.createFile(bytes) // could be File, InputStream, byte[]...
@@ -32,6 +34,10 @@ class FileService {
 			inputFile.filename = filename
 		}
 		inputFile.metaData = new BasicDBObject(dimensions: dimensions)
+		attributes.each { k, v ->
+			inputFile.metaData.append(k, v)
+		}
+
 		inputFile.save()
 		log.info("Saved file ${inputFile} in bucket ${bucket}")
 		inputFile

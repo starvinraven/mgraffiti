@@ -28,7 +28,7 @@ class Wall {
 	List<WallLayer> layers
 	String creatorName
 	String nfcId
-	Double popularity
+	Double popularity = 0
 	
 	def getImageUrl() {
 		return grailsApplication.config.grails.serverURL + "/rest/wall/${this.id.toString()}/image"

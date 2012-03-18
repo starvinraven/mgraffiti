@@ -71,10 +71,9 @@ class RestWallController extends RestBaseController {
 		}
 		log.info("saving: ${wall.dump()}")
 		if(!wallService.create(wall)) {
-			log.warn("error")
 			sendError("Error saving wall ${wall.errors}")	
 		} else {
-			log.info("saved!")
+			response.status = 201
 			render wall.toMap() as JSON
 		}
 	}
