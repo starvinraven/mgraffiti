@@ -15,7 +15,7 @@ class RestWallController extends RestBaseController {
 			result = byLocation(
 				params.lat.replace(",", "."), 
 				params.lon.replace(",", "."), 
-				params.radius
+				params.radius?.replace(",", ".")
 			)
 		} else if(params.nfcId) {
 			result = byNfc(params.nfcId)
