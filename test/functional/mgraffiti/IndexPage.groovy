@@ -11,6 +11,9 @@ class IndexPage extends Page {
 	}
 
 	static content = {
+		popularities { $("p.pop") }
+		popularity { i -> popularities[i] }
+		walls { $("div.wall") }
 	}
 
 }
