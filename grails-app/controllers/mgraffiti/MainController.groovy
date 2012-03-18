@@ -6,6 +6,12 @@ class MainController {
 	
 	def mgraffitiDB
 
+	/**
+	 * List the walls by popularity - used by main index page ajax calls
+	 * 
+	 * @param perPage walls per page
+	 * @param page the page number (0-indexed)
+	 */
 	def walls() {
 		def page = params.page as Integer ?: 0
 		def perPage = Math.min(20, params.perPage as Integer ?: 10)
@@ -25,8 +31,16 @@ class MainController {
 		]
 		render map as JSON
 	}
+
+	/**
+	 * Blank main page action
+	 */
+	def index() {}
 	
-	def getWallsNative(page, perPage) {
+	/**	
+	 * Load paged list of walls using the native mongo driver
+	 */
+	private def getWallsNative(page, perPage) {
 		def first = page*perPage
 		def mongoWalls = mgraffitiDB.wall
 			.find(location: ['$ne':null])
@@ -39,34 +53,5 @@ class MainController {
 		def totalCount = mgraffitiDB.wall.count(location: ['$ne':null])
 		[walls, totalCount]
 	}
-	
-	/**
-	 * Criteria queries broken!
-	 * 
-	 * @deprecated
-	 * @param page
-	 * @param perPage
-	 * @return
-	 */
-	def getWallsWithCriteria(page, perPage) {
-		def first = page*perPage
 		
-		def c = Wall.createCriteria()
-		def walls = c.list {
-			ne("location", null)
-			firstResult(first)
-			maxResults(perPage)
-			//order("lastUpdated", "desc")
-			order("popularity", "desc")
-		}
-
-		// Wall.countByLocationNotNull.. doesn't work with mongo
-		c = Wall.createCriteria()
-		def totalCount = c.count {
-			ne("location", null)
-		}
-		[walls, totalCount]
-	}
-	
-	def index() {}
 }

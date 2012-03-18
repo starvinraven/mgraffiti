@@ -7,12 +7,26 @@ class WallService {
 	def imageService
 	def fileService
 
+	/**
+	 * Create a wall and generate the flattened image (= background)
+	 * 
+	 * @param wall
+	 * @return the saved Wall object or false if save unsuccessful
+	 */
 	def create(Wall wall) {
 		def ret = wall.save()
 		imageService.createFlattenedImagesAsync(wall)
 		ret
 	}
 
+	/**
+	 * Find walls near given coordinates
+	 * 
+	 * @param lat The latitude near which to search
+	 * @param lon The longitude near which to search
+	 * @param maxDistanceKm Maximum search distance in km
+	 * @return List of map objects with keys distance (distance to search center) and obj (the Wall domain object)
+	 */
 	def findWallsNear(lat, lon, maxDistanceKm) {
 		def earthRadiusKm = 6378
 

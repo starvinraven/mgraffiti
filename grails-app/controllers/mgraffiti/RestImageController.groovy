@@ -1,7 +1,6 @@
 package mgraffiti
 
 import grails.converters.JSON
-import groovyx.gpars.GParsPool
 
 class RestImageController extends RestBaseController {
 
@@ -9,6 +8,9 @@ class RestImageController extends RestBaseController {
 	
 	def imageService
 	
+	/**
+	 * Send web (.jpg) flattened image by id
+	 */
 	def outputWebImage() {
 		cache false
 		def wall = getOr404(Wall, params.id)
@@ -16,6 +18,9 @@ class RestImageController extends RestBaseController {
 		imageService.getFlattenedImage(wall, ImageTypes.JPG, response.outputStream)
 	}
 	
+	/**
+	 * Send mobile client (.png) flattened image by id
+	 */
 	def outputImage() {
 		cache false
 		def wall = getOr404(Wall, params.id)
@@ -27,13 +32,15 @@ class RestImageController extends RestBaseController {
 		response.outputStream << bytes
 	}
 	
+	/**
+	 * Store wall layer image sent by client (must be .png)
+	 */
 	def putImage() {
 		Wall wall = getOr404(Wall, params.id)
 		def img = request.inputStream.bytes
 		
 		log.info "bytes uploaded: "+img?.length
 		WallLayer wallLayer = new WallLayer()
-		// wallLayer["fromIp"] = "123.45.67.89"
 		if(!imageService.addLayer(wall, wallLayer, img)) {
 			log.warn "error in validation: "+wallLayer.errors
 			sendError("Invalid image", 400)
