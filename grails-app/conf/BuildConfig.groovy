@@ -11,9 +11,11 @@ grails.project.dependency.resolution = {
         // uncomment to disable ehcache
         // excludes 'ehcache'
     }
-    log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     checksums true // Whether to verify checksums on resolve
-
+	def gebVersion = "0.6.3"
+	def seleniumVersion = "2.0rc3"
+	
     repositories {
         inherits true // Whether to inherit repository definitions from plugins
         grailsPlugins()
@@ -32,7 +34,13 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
         // runtime 'mysql:mysql-connector-java:5.1.16'
-		build 'org.codehaus.gpars:gpars:0.12'
+		compile 'org.codehaus.gpars:gpars:0.12'
+		compile("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion") {
+			exclude "xml-apis"
+		}
+		compile("org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion")
+		compile("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
+		compile "org.codehaus.geb:geb-spock:$gebVersion"
     }
 
     plugins {
@@ -47,6 +55,7 @@ grails.project.dependency.resolution = {
 		compile ":quartz:0.4.2"
 		compile ":codenarc:0.16.1"
 		compile ":spock:0.6"
+		compile ":geb:$gebVersion"
 
         build ":tomcat:$grailsVersion"
     }
