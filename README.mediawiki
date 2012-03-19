@@ -2,20 +2,20 @@
 
 == What is this? ==
 
-This is the server backend for the Futurice mGraffiti project. mGraffiti is the project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - with a few more to add some (Spock/Geb) tests and perform a bit of refactoring.
+This is the server backend for the Futurice mGraffiti project. mGraffiti is a project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - with a few more to add some (Spock/Geb) tests and perform a bit of refactoring.
 
 The application is running [http://mgraffiti.futurice.com here], if you want to check it out, although the web page isn't that much to look at.
 
 == What does it do? ==
 
-The app is essentially a 'virtual toilet wall', on which users can paint using the mobile clients. More technically, using a REST JSON API, you can:
+The app is essentially a 'virtual toilet wall', on which users can paint using the mobile clients. More technically, using a REST-lite JSON API, you can:
 
 * Create new walls, and associate them with lat/lon coordinates and/or a NFC tag. (For the initial version, all walls are given a preset background image - custom background can be easily supported.)
-* Query walls by proximity or NFC tag. 
+* Query for walls by proximity or NFC tag. 
 * Get the images for the walls.
 * Add an image layer to a wall.
 
-There is also a quick'n'dirty web page, where you can view the walls created.
+There is also a quick'n'dirty web page, where you can view the walls created. But really, you'll want to download the QT or WP7 apps.
 
 == What is it built with? ==
 
