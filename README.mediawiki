@@ -2,9 +2,9 @@
 
 == What is this? ==
 
-This is the server backend for the Futurice mGraffiti project. mGraffiti is the project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - as such, there are currently no tests (yet, anyway) and there will be rough edges here and there.
+This is the server backend for the Futurice mGraffiti project. mGraffiti is the project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - with a few more to add some (Spock/Geb) tests and perform a bit of refactoring.
 
-The application is running [http://mgraffiti.futurice.com here], if you want to check it out.
+The application is running [http://mgraffiti.futurice.com here], if you want to check it out, although the web page isn't that much to look at.
 
 == What does it do? ==
 
@@ -22,11 +22,12 @@ There is also a quick'n'dirty web page, where you can view the walls created.
 Currently:
 
 * [http://grails.org Grails] 2.0.1.
-* [http://mongodb.org MongoDB] 2.0.1. 
+* [http://mongodb.org MongoDB] 2.0.1.
+* A bunch of Grails plugins.
 
 == How do I run this thing? ==
 
-Download the dependencies above, install them on a given machine, and say 'grails run-app' - you should have a working instance of the backend app. Why? Might be useful for learning MongoDB/Grails... Also feel free to create your own clients if you wish!
+Download the dependencies above, install them on a given machine, and say 'grails run-app' - you should have a working instance of the backend app. Why? Might be useful for learning MongoDB/Grails/Spock/Geb... Also feel free to create your own clients if you wish!
 
 == REST API ==
 
