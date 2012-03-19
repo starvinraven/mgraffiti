@@ -29,6 +29,8 @@ Currently:
 
 Download the dependencies above, install them on a given machine, and say 'grails run-app' - you should have a working instance of the backend app. Why? Might be useful for learning MongoDB/Grails/Spock/Geb... Also feel free to create your own clients if you wish!
 
+To run the tests, it's easiest to say 'grails dev test-app :spock'. To generate a CodeNarc report, 'grails codenarc' - although the ruleset doesn't fully support Grails 2.0.
+
 == REST API ==
 
 The meat and potatoes of the application.
