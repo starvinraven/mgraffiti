@@ -56,7 +56,7 @@ grails.project.dependency.resolution = {
 		compile ":codenarc:0.16.1"
 		compile ":spock:0.6"
 		compile ":geb:$gebVersion"
-
+		//test ":code-coverage:1.2.5" // also no worky
         build ":tomcat:$grailsVersion"
     }
 }
