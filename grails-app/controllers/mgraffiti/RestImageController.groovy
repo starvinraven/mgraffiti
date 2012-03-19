@@ -24,7 +24,7 @@ class RestImageController extends RestBaseController {
 	def outputImage() {
 		cache false
 		def wall = getOr404(Wall, params.id)
-		ByteArrayOutputStream baos = new ByteArrayOutputStream() // <- probably required due to WEIRD grails bug?
+		ByteArrayOutputStream baos = new ByteArrayOutputStream() // <- required due to WEIRD grails bug?
 		imageService.getFlattenedImage(wall, ImageTypes.PNG, baos)
 		def bytes = baos.toByteArray()
 		response.contentType = "image/png"
@@ -38,8 +38,6 @@ class RestImageController extends RestBaseController {
 	def putImage() {
 		Wall wall = getOr404(Wall, params.id)
 		def img = request.inputStream.bytes
-		
-		log.info "bytes uploaded: "+img?.length
 		WallLayer wallLayer = new WallLayer()
 		if(!imageService.addLayer(wall, wallLayer, img)) {
 			log.warn "error in validation: "+wallLayer.errors

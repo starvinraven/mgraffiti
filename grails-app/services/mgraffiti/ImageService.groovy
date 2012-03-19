@@ -45,7 +45,7 @@ class ImageService {
 	/**
 	 * Create flattened wall image (using all layers) and write to database. Overwrites existing flattened image if exists.
 	 * 
-	 * Note: transactionality would be nice.
+	 * Note: some transactionality would be nice.
 	 * 
 	 * @param wall
 	 * @param type

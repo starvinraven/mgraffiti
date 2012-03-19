@@ -11,7 +11,8 @@ class FileService {
 	static transactional = false
 	
 	def imageService
-	def mongo
+	//def mongo
+	def mgraffitiDB
 	
 	def delete(FileBuckets bucket, ObjectId id) {
 		GridFS gridFs = getGridFs(bucket)
@@ -68,12 +69,14 @@ class FileService {
 	}
 	
 	private GridFS getGridFs(FileBuckets bucket) {
-		def mgraffitiDB = getDB()
+		//def mgraffitiDB = getDB()
 		new GridFS(mgraffitiDB, bucket.toString())
 	}
 	
+	/*
 	def getDB() {
 		mongo.getDB("mgraffiti")
 	}
+	*/
 	
 }

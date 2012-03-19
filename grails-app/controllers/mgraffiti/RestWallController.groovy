@@ -71,7 +71,6 @@ class RestWallController extends RestBaseController {
 			return
 		} 
 
-		log.info "creating new wall: ${data}"
 		def (success, returnValue) = wallService.create(data)
 		if(!success) {
 			sendError(returnValue)	

@@ -6,6 +6,7 @@ class WallService {
 
 	def imageService
 	def fileService
+	def mgraffitiDB
 
 	/**
 	 * Create a wall and generate the flattened image (= background)
@@ -46,7 +47,6 @@ class WallService {
 	def findWallsNear(lat, lon, maxDistanceKm) {
 		def earthRadiusKm = 6378
 
-		def db = fileService.getDB()
 		def coords = [lon as Double, lat as Double]
 		maxDistanceKm = maxDistanceKm?.isDouble() ? Double.parseDouble(maxDistanceKm) : 100
 
@@ -59,7 +59,7 @@ class WallService {
 				]
 
 		log.info "command: ${command}"
-		def c = db.command(command)
+		def c = mgraffitiDB.command(command)
 		def r = c?.results
 
 		def list = r.collect {

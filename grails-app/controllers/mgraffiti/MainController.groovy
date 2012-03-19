@@ -35,7 +35,8 @@ class MainController {
 	/**
 	 * Blank main page action
 	 */
-	def index() {}
+	def index() {
+	}
 	
 	/**	
 	 * Load paged list of walls using the native mongo driver
