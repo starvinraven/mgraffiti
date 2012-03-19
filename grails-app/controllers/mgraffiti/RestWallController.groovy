@@ -11,7 +11,10 @@ class RestWallController extends RestBaseController {
 	def list() {
 		cache false
 		def result = null
-		if(params.lat && params.lon) {
+		
+		if(params.id) {
+			result = byId(params.id)
+		} else if(params.lat && params.lon) {
 			result = byLocation(
 				params.lat.replace(",", "."), 
 				params.lon.replace(",", "."), 
@@ -22,12 +25,13 @@ class RestWallController extends RestBaseController {
 		} else {
 			result = Wall.list()?.collect { it.toMap() }
 		}
+		
 		if(result != null) {
 			render result as JSON
 		}
 	}
 
-	List byLocation(lat, lon, radius) {
+	private List byLocation(lat, lon, radius) {
 		def result = wallService.findWallsNear(lat, lon, radius)
 		def list = []
 		log.info "bylocation got ${result?.size()} results"
@@ -38,14 +42,24 @@ class RestWallController extends RestBaseController {
 		}
 		list
 	}
+	
+	private def byId(id) {
+		Wall wall = Wall.get(new org.bson.types.ObjectId(id))
+		if(!wall) {
+			sendError("No wall found with id '${id}'", 404)
+			null
+		} else {
+			wall.toMap()
+		}
+	}
 
-	def byNfc(id) {
+	private def byNfc(id) {
 		Wall wall = Wall.findByNfcId(id)
 		if(!wall) {
 			sendError("No wall found with nfcId '${id}'", 404)
-			return null
+			null
 		} else {
-			return wall.toMap()
+			wall.toMap()
 		}
 	}
 
@@ -55,26 +69,15 @@ class RestWallController extends RestBaseController {
 		if((!data?.location && !data?.nfcId) || !data?.title || !data.creatorName) {
 			sendError("Invalid data")
 			return
-		} else {
-			log.info "creating new wall: ${data}"
-		}
-		Wall wall = new Wall(title: data.title, creatorName: data.creatorName)
-		if(data?.location?.lat && data?.location?.lon) {
-			wall.location = [data.location.lon as Double, data.location.lat as Double]
-		}
-		if(data.nfcId) {
-			if(Wall.findByNfcId(data.nfcId)) {
-				sendError("Wall with NFC tag ${data.nfcId} exists already!")
-				return
-			}
-			wall.nfcId = data.nfcId
-		}
-		log.info("saving: ${wall.dump()}")
-		if(!wallService.create(wall)) {
-			sendError("Error saving wall ${wall.errors}")	
+		} 
+
+		log.info "creating new wall: ${data}"
+		def (success, returnValue) = wallService.create(data)
+		if(!success) {
+			sendError(returnValue)	
 		} else {
 			response.status = 201
-			render wall.toMap() as JSON
+			render returnValue.toMap() as JSON
 		}
 	}
 }

@@ -9,14 +9,30 @@ class WallService {
 
 	/**
 	 * Create a wall and generate the flattened image (= background)
-	 * 
-	 * @param wall
-	 * @return the saved Wall object or false if save unsuccessful
+	 * @data The HTTP request parameters
+	 * @return List with two elements:
+	 * 		if successful save: [true, wallInstance]
+	 * 		if error when saving: [false, "explanation text"]
 	 */
-	def create(Wall wall) {
-		def ret = wall.save()
-		imageService.createFlattenedImagesAsync(wall)
-		ret
+	def create(def data) {
+		Wall wall = new Wall(title: data.title, creatorName: data.creatorName)
+		if(data?.location?.lat && data?.location?.lon) {
+			wall.location = [data.location.lon as Double, data.location.lat as Double]
+		}
+		if(data.nfcId) {
+			if(Wall.findByNfcId(data.nfcId)) {
+				return [false, "Wall with NFC tag ${data.nfcId} exists already!"]
+			} else {
+				wall.nfcId = data.nfcId
+			}
+		}
+		log.info("saving: ${wall.dump()}")
+		if(!wall.save()) {
+			return [false, "Unable to save wall: ${wall.errors.each.collect { it.toString() }}"] 	
+		} else {
+			imageService.createFlattenedImagesAsync(wall)
+			[true, wall]
+		}
 	}
 
 	/**
@@ -48,9 +64,9 @@ class WallService {
 
 		def list = r.collect {
 			[
-						distance: (it.dis*earthRadiusKm),
-						obj: Wall.get(it.obj._id.toString()) // TOOD: prefetch with getAll
-					]
+				distance: (it.dis*earthRadiusKm),
+				obj: Wall.get(it.obj._id.toString()) // TOOD: prefetch with getAll
+			]
 		}
 		list
 	}
