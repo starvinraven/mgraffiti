@@ -36,6 +36,7 @@ class FileService {
 		}
 		inputFile.metaData = new BasicDBObject(dimensions: dimensions)
 		attributes.each { k, v ->
+			log.info("attr ${k}: ${v}")
 			inputFile.metaData.append(k, v)
 		}
 

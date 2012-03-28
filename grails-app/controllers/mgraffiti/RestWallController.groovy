@@ -65,6 +65,7 @@ class RestWallController extends RestBaseController {
 
 	def create() {
 		// {"title": "test", "creatorName": "dudeman12", location: {"lat":12.132, "lon":13.456}, "nfcId": "nfcTagGoesHere"}
+		log.info("creating wall")
 		def data = request.JSON
 		if((!data?.location && !data?.nfcId) || !data?.title || !data.creatorName) {
 			sendError("Invalid data")

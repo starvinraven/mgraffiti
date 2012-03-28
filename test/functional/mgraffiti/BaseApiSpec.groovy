@@ -1,5 +1,8 @@
 package mgraffiti
 
+import java.io.File;
+import java.io.InputStream;
+
 import com.gmongo.GMongo
 import com.mongodb.gridfs.GridFS
 import com.mongodb.DB
@@ -10,7 +13,9 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import groovyx.net.http.URIBuilder
 import spock.lang.*
 import grails.plugin.spock.IntegrationSpec
-
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.Resource
+import org.apache.commons.codec.digest.DigestUtils
 
 abstract class BaseApiSpec extends IntegrationSpec {
 
@@ -53,6 +58,20 @@ abstract class BaseApiSpec extends IntegrationSpec {
 	*/
 	private static def getMongo() {
 		GMongo mongo = new GMongo("127.0.0.1", 27017)
+	}
+	
+	protected compareFiles(InputStream is, File file) {
+		def fis = new FileInputStream(file)
+		def hashA = DigestUtils.md5Hex(is)
+		def hashB = DigestUtils.md5Hex(fis)
+		fis.close()
+		println "hashes: ${hashA} vs ${hashB}"
+		hashA == hashB
+	}
+
+	protected File loadResourceFile(def fileName) {
+		Resource resource = new ClassPathResource(fileName)
+		resource.getFile()
 	}
 	
 }

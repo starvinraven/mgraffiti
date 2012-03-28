@@ -172,7 +172,7 @@ class ImageService {
 		if(!validateWallLayer(wall, layer, bytes)) {
 			return false
 		}
-		def file = fileService.saveImage(FileBuckets.WALL_LAYERS, bytes, null, [wallId: wall])
+		def file = fileService.saveImage(FileBuckets.WALL_LAYERS, bytes, null, [wallId: wall.id])
 		log.info "file id: ${file.id.toString()}"
 		layer.layerImageId = file.id.toString()
 		layer.dateCreated = new Date()

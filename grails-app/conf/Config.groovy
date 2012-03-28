@@ -80,8 +80,12 @@ log4j = {
     //
     appenders {
 		console name:'stdout', layout:pattern(conversionPattern: '%-25d{ISO8601} %-5p [%t]: %m%n')
-		rollingFile name: 'file', maxFileSize: 2000000, file: '/opt/tomcat/logs/mgraffiti.log', append:true, maxBackupIndex: 10, layout:pattern(conversionPattern: '%-25d{ISO8601} %-5p [%t]: %m%n')
-		rollingFile name: 'stacktrace', maxFileSize: 1000000, file: '/opt/tomcat/logs/stacktrace.log', append:true, maxBackupIndex: 10, layout:pattern(conversionPattern: '%-25d{ISO8601} %-5p [%t]: %m%n')
+		environments {
+			production {
+				rollingFile name: 'file', maxFileSize: 2000000, file: '/opt/tomcat/logs/mgraffiti.log', append:true, maxBackupIndex: 10, layout:pattern(conversionPattern: '%-25d{ISO8601} %-5p [%t]: %m%n')
+				rollingFile name: 'stacktrace', maxFileSize: 1000000, file: '/opt/tomcat/logs/stacktrace.log', append:true, maxBackupIndex: 10, layout:pattern(conversionPattern: '%-25d{ISO8601} %-5p [%t]: %m%n')
+			}
+		}
     }
 	environments {
 		development {

@@ -3,10 +3,9 @@ package mgraffiti
 import spock.lang.*
 import grails.plugin.spock.IntegrationSpec
 import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.Method.*
 import org.bson.types.ObjectId
 import com.mongodb.BasicDBObject
-import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.Resource
 import org.apache.commons.codec.digest.DigestUtils
 
 
@@ -16,8 +15,8 @@ class ApiSpec extends BaseApiSpec {
 	@Shared
 	def testWalls = [
 		[ title: "fin", 		lat: 60.10,	lon: 25.25,	nfcId: null,		creator: "spock" ],
-		[ title: "bolivia", 	lat: -16.9, lon: -64.5,	nfcId: "testNfc1",	creator: "spock" ],
-		[ title: "with nfc",	lat: null,	lon: null,	nfcId: "testNfc2",	creator: "spock" ],
+		[ title: "bolivia", 	lat: -16.9, lon: -64.5,	nfcId: "testNfcA",	creator: "spock" ],
+		[ title: "with nfc",	lat: null,	lon: null,	nfcId: "testNfcB",	creator: "spock" ],
 		[ title: "4th", 		lat: 61.12, lon: 26.99,	nfcId: null,		creator: "spock" ]
 	]
 
@@ -39,7 +38,7 @@ class ApiSpec extends BaseApiSpec {
 				)
 
 		then: "Request is successful, and we get the wall object in return"
-		resp.status == 201
+		resp.status in [200, 201]
 		resp.contentType == JSON.toString()
 		def wallId = resp.data.id
 		createdWallData << [id: wallId, url: resp.data.image.url, jpgUrl: resp.data.image.jpgUrl]
@@ -132,13 +131,46 @@ class ApiSpec extends BaseApiSpec {
 		createdWall << testWalls
 	}
 
-	/*
-	 def "Add layer to wall"() {
-	 }
-	 def "Check that layer is available"() {
-	 }
-	 */
-
+	def "Adding layers to wall"() {
+		given: "The wall image url"
+		def wallUrl = testWalls.first().url	
+		
+		when: "Adding the layers one by one to the first created wall"
+		println "add... ${layerFile} to ${wallUrl}"
+		def resp = client.put(requestContentType: BINARY, body: layerFile.bytes, path: wallUrl)
+		
+		then: "The result should be as expected"
+		println resp.dump()
+		resp.status in [200, 201]
+		
+		where: "The layer images are used"
+		layerFile << [
+			loadResourceFile("resources/layer1.png"),
+			loadResourceFile("resources/layer2.png"),
+			loadResourceFile("resources/layer3.png"),
+		]
+	}
+	
+	def "Loading the wall images where layers were added"() {
+		given: "The wall ID and reference combined images"
+		def wallPngUrl = testWalls.first().url
+		def wallJpgUrl = testWalls.first().jpgUrl
+		def combinedJpg = loadResourceFile("resources/combined_web.jpeg")
+		def combinedPng = loadResourceFile("resources/combined_png.png")
+		Thread.sleep(3000) // sleep to let the JPG images be generated in background thread!
+		
+		when: "Downloading the corresponding images"
+		def pngResp = client.get(uri: wallPngUrl, contentType: BINARY)
+		def jpgResp = client.get(uri: wallJpgUrl, contentType: BINARY)
+		
+		then: "The results match what we expect"
+		[pngResp, jpgResp]*.status == [200, 200]
+		pngResp.contentType == "image/png"
+		jpgResp.contentType == "image/jpeg"
+		compareFiles(pngResp.data, combinedPng)
+		compareFiles(jpgResp.data, combinedJpg)
+	}
+	
 	/**
 	 * Perform cleanup - delete created walls (mongodb: no transactions, no rollback)
 	 *
@@ -149,19 +181,7 @@ class ApiSpec extends BaseApiSpec {
 		}
 	}
 
-	private compareFiles(InputStream is, File file) {
-		def fis = new FileInputStream(file)
-		def hashA = DigestUtils.md5Hex(is)
-		def hashB = DigestUtils.md5Hex(fis)
-		fis.close()
-		println "hashes: ${hashA} vs ${hashB}"
-		hashA == hashB
-	}
 
-	private File loadResourceFile(def fileName) {
-		Resource resource = new ClassPathResource(fileName)
-		resource.getFile()
-	}
 
 	private def wallsNotFoundInResponse(def myWalls, def theirWalls) {
 		wallsFoundInResponse(myWalls, theirWalls, true)
@@ -184,12 +204,11 @@ class ApiSpec extends BaseApiSpec {
 				jsonEquals(apiWall?.nfcId, testWall.nfcId),
 				jsonEquals(apiWall?.creatorName, testWall.creator)
 			]
-			if(!matches.every { it }) {
-				// println "walls not equal: ${apiWall} vs ${testWall}"
-				// println "matches: ${matches}"
-				return reverse ? true : false
-			} else {
+			
+			if(matches.every { it }) {
 				return reverse ? false : true
+			} else {
+				return reverse ? true : false
 			}
 		}
 	}
