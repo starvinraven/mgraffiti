@@ -2,7 +2,7 @@
 
 == What is this? ==
 
-This is the server backend for the Futurice mGraffiti project. mGraffiti is a project that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - with a few more to add some (Spock/Geb) tests and perform a bit of refactoring.
+This is the server backend for the Futurice mGraffiti project. mGraffiti is a service that took part in the Nokia World 2011 Hackathon event, with both Windows Phone 7 and QT mobile client versions. It won the best QT app prize. The backend is a couple of days worth of work - with a few more to add some (Spock/Geb) tests and perform a bit of refactoring.
 
 The application is running [http://mgraffiti.futurice.com here], if you want to check it out, although the web page isn't much to look at.
 
